@@ -1,7 +1,6 @@
 class AsyncCart {
 	constructor() {
 		this.cartItems = []
-		this.cartItemsOrder = []
 		this.updateTimeout = null
 	}
 
