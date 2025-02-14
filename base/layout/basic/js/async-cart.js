@@ -2,33 +2,7 @@ class AsyncCart {
 	constructor() {
 		this.cartItems = []
 		this.cartItemsOrder = []
-
-		// 디바운스/쓰로틀링을 위한 상태
 		this.updateTimeout = null
-		this.lastUpdateTime = 0
-		this.UPDATE_DELAY = 500
-		this.updateTimeout = null
-		this.updateQueue = Promise.resolve()
-		this.lang = document.documentElement.lang || 'ko'
-	}
-
-	logAction(msg, data = {}) {
-		console.log(`[${new Date().toISOString()}] ${msg}`, data)
-	}
-
-	debounce(callback, delay) {
-		return (...args) => {
-			if (this.updateTimeout) {
-				clearTimeout(this.updateTimeout)
-			}
-
-			return new Promise(resolve => {
-				this.updateTimeout = setTimeout(async () => {
-					const result = await callback.apply(this, args)
-					resolve(result)
-				}, delay)
-			})
-		}
 	}
 
 	findBasketItem(basketNo) {
@@ -372,12 +346,11 @@ window.addEventListener('load', async () => {
 	const cartLayer = document.getElementById('cart-layer')
 	if (cartLayer) {
 		const open = async () => {
-			await cartHelper.updateCart()
-			console.log('open')
 			cartLayer.classList.add('opening')
 			setTimeout(() => {
 				cartLayer.classList.add('opened')
 			})
+			await cartHelper.updateCart()
 		}
 
 		const close = () => {
@@ -390,6 +363,7 @@ window.addEventListener('load', async () => {
 		document.querySelectorAll('button.cart').forEach(a => {
 			a.addEventListener('click', open)
 		})
+
 		cartLayer
 			.querySelector('& > .backdrop')
 			?.addEventListener('click', close)
