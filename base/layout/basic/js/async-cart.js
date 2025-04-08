@@ -188,13 +188,15 @@ class AsyncCart {
 			const parser = new DOMParser()
 			const doc = parser.parseFromString(html, 'text/html')
 			const script = doc.querySelector('script:last-child')
-			const lines = script?.textContent.split(';')
+			const lines = script?.textContent.split('\n')
 			const result =
 				lines
 					?.filter(line => line.includes('aBasketProductData['))
-					.join(';') + ';'
-			aBasketProductData = []
-			eval(result)
+					.join('\n')
+			if (result) {
+				aBasketProductData = []
+				eval(result)
+			}
 		} catch (error) {
 			console.error('Error fetching or parsing page:', error)
 			return null
