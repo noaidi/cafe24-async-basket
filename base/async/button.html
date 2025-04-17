@@ -1,3 +1,27 @@
+<style>
+	button.cart {
+		cursor: pointer;
+
+		& span:has(> [data-count]) {
+			&::before {
+				content: '(';
+			}
+
+			& [data-count]::before {
+				content: attr(data-count)
+			}
+
+			&::after {
+				content: ')';
+			}
+
+			&:has([data-count='0']) {
+				display: none;
+			}
+		}
+	}
+</style>
+
 <button
 	type="button"
 	class="cart"
@@ -6,5 +30,7 @@
 	hx-target="#async-layer .main"
 	hx-trigger="click"
 >
-	<span module="Layout_orderBasketcount"><span>CART</span><span class="count" data-count="{$basket_count}"></span></span>
+	<span module="Layout_orderBasketcount">
+		<span>Cart</span><span><span data-count="{$basket_count}"></span></span>
+	</span>
 </button>

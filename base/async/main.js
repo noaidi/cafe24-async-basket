@@ -185,8 +185,7 @@ class AsyncLayer {
 			}
 
 			const html = await response.text()
-			const parser = new DOMParser()
-			const doc = parser.parseFromString(html, 'text/html')
+			const doc = (new DOMParser()).parseFromString(html, 'text/html')
 			const script = doc.querySelector('script:last-child')
 			const lines = script?.textContent.split('\n')
 			const result =
@@ -212,7 +211,7 @@ class AsyncLayer {
 
 			await this.fetchProductData()
 
-			document.querySelectorAll('button.cart .count').forEach(elem => {
+			document.querySelectorAll('button.cart [data-count]').forEach(elem => {
 				elem.setAttribute('data-count', cartItems.length)
 			})
 
@@ -341,32 +340,67 @@ const deleteCartItem = async elem => {
 	}
 }
 
+const initializeCartLayer = async (cartLayer) => {
+	const open = async () => {
+		cartLayer.classList.add('opening')
+		setTimeout(() => {
+			cartLayer.classList.add('opened')
+		})
+		await cartHelper.updateCart()
+	}
+
+	const close = () => {
+		cartLayer.classList.remove('opened')
+		setTimeout(() => {
+			cartLayer.classList.remove('opening')
+		}, 200)
+	}
+
+	document.querySelectorAll('button.cart').forEach(a => {
+		a.addEventListener('click', open)
+	})
+
+	cartLayer
+		.querySelector('& > .backdrop')
+		?.addEventListener('click', close)
+}
+
+const initializeCartButton = async (cartLayer) => {
+	document.addEventListener('htmx:afterSwap', (event) => {
+		const mainDiv = cartLayer.querySelector('.main')
+		if (!mainDiv || event.target !== mainDiv) {
+			return
+		}
+
+		const html = event.detail.xhr.responseText
+		const doc = (new DOMParser()).parseFromString(html, 'text/html')
+		const scripts = doc.querySelectorAll('script')
+		if (scripts.length <= 0) {
+			return
+		}
+
+		const ids = ['NaverChk_Button', 'appPaymentButtonBox', 'kakao-checkout-button']
+		const elems = mainDiv.querySelectorAll(ids.map(id => '#' + id).join(','))
+		elems.forEach(elem => {
+			elem.id = 'async-' + elem.id
+		})
+
+		const script = scripts[scripts.length - 1]
+		const code = ids.reduce(
+			(acc, id) => acc.replaceAll(new RegExp(id, 'g'),
+			`async-${id}`
+		), script.textContent);
+		console.log(code)
+		eval(code)
+	})
+}
+
 window.addEventListener('load', async () => {
 	await initializeCart()
 
 	const cartLayer = document.getElementById('async-layer')
 	if (cartLayer) {
-		const open = async () => {
-			cartLayer.classList.add('opening')
-			setTimeout(() => {
-				cartLayer.classList.add('opened')
-			})
-			await cartHelper.updateCart()
-		}
-
-		const close = () => {
-			cartLayer.classList.remove('opened')
-			setTimeout(() => {
-				cartLayer.classList.remove('opening')
-			}, 200)
-		}
-
-		document.querySelectorAll('button.cart').forEach(a => {
-			a.addEventListener('click', open)
-		})
-
-		cartLayer
-			.querySelector('& > .backdrop')
-			?.addEventListener('click', close)
+		await initializeCartLayer(cartLayer)
+		await initializeCartButton(cartLayer)
 	}
 })
