@@ -176,7 +176,7 @@ class AsyncLayer {
 	}
 
 	async fetchProductData() {
-		const url = '/layout/cart-info.html'
+		const url = '/async/info.html'
 
 		try {
 			const response = await fetch(url)
