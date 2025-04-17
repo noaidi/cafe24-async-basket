@@ -1,4 +1,4 @@
-class AsyncCart {
+class AsyncLayer {
 	constructor() {
 		this.cartItems = []
 		this.updateTimeout = null
@@ -237,7 +237,7 @@ let cartHelper
 
 // 초기화 함수
 const initializeCart = async () => {
-	cartHelper = new AsyncCart()
+	cartHelper = new AsyncLayer()
 	await cartHelper.init()
 }
 
@@ -255,7 +255,7 @@ const refetchCart = async () => {
 }
 
 document.body.addEventListener('htmx:afterSwap', event => {
-	const target = document.querySelector('#cart-layer .main')
+	const target = document.querySelector('#async-layer .main')
 	if (event.target === target) {
 		target.querySelectorAll('[id^="quantity_id_"]').forEach(input => {
 			input.addEventListener('change', async () => {
@@ -344,7 +344,7 @@ const deleteCartItem = async elem => {
 window.addEventListener('load', async () => {
 	await initializeCart()
 
-	const cartLayer = document.getElementById('cart-layer')
+	const cartLayer = document.getElementById('async-layer')
 	if (cartLayer) {
 		const open = async () => {
 			cartLayer.classList.add('opening')
