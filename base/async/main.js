@@ -390,7 +390,6 @@ const initializeCartButton = async (cartLayer) => {
 			(acc, id) => acc.replaceAll(new RegExp(id, 'g'),
 			`async-${id}`
 		), script.textContent);
-		console.log(code)
 		eval(code)
 	})
 }
