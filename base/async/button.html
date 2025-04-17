@@ -1,3 +1,16 @@
+<button
+	type="button"
+	class="cart"
+	hx-select=".xans-order-basketpackage"
+	hx-get="/async/layer.html"
+	hx-target="#async-layer .main"
+	hx-trigger="click"
+>
+	<span module="Layout_orderBasketcount">
+		<span>Cart</span><span><span data-count="{$basket_count}"></span></span>
+	</span>
+</button>
+
 <style>
 	button.cart {
 		cursor: pointer;
@@ -21,16 +34,3 @@
 		}
 	}
 </style>
-
-<button
-	type="button"
-	class="cart"
-	hx-select=".xans-order-basketpackage"
-	hx-get="/async/layer.html"
-	hx-target="#async-layer .main"
-	hx-trigger="click"
->
-	<span module="Layout_orderBasketcount">
-		<span>Cart</span><span><span data-count="{$basket_count}"></span></span>
-	</span>
-</button>
